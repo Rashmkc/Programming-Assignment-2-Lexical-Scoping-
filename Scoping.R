@@ -5,34 +5,38 @@ getwd()
 ## setting input x as a matrix
 ## Setting the Solved Value "sv" as a null
 ## chaning every reference to "mean" to "solve"
-
-createCacheMatrix <- function(x = matrix()){
-    m <- NULL
+library(MASS)
+makeCacheMatrix <- function(x = matrix()){
+    m <- NULL    
     set <- function(y){
       x <<- y
       m <<- NULL
       
     }
     get <- function() x
-    setmean <- function(mean) m <<- mean
-    getmean <- function() m
+    setm <- function(mean) m <<- mean
+    getm  <- function(){
+          inver <- ginv(x)    
+          inver%*%x     #function tobtain inverse of matrix
+    } 
+    
     list(set = set, get = get,
-          setmean = setmean,
-          getmean = getmean
+          setm = setm,
+          getm = getm
          )
 }
 
 ## now chaning "mean" to "solve" as "m" to "s"
 
 cacheSolve <- function (x, ...){
-    m <- x$getmean()
+    m <- x$getm()
     if(!is.null(m)){
-        message("getting cached data")
+        message("getting cached data!")
       return(m)
     }
     data <- x$get()
-    m <- mean(data, ...)
-    x$setmean(m)
-    sv
+    m <- solve(data, ...)
+    x$setm(m)
+    m
   
 }
